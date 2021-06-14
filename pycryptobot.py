@@ -398,7 +398,9 @@ def executeJob(sc=None, app: PyCryptoBot=None, state: AppState=None, trading_dat
                 fields = ['ARIMA Price', 'Time', 'Currency', 'Price']
     
                 # data rows of csv file 
-                rows = [ [f'{str(round(prediction[1], 2))},{prediction[0]},{app.getMarket()},{truncate(price)}']]
+                csv_update_price = truncate(price)
+                prediction = technical_analysis.seasonalARIMAModelPrediction(int(app.getGranularity() / 60) * 3)
+                rows = [ [f'{str(round(prediction[1], 2))},{prediction[0]},{app.getMarket()},{csv_update_price}']]
     
                 # name of csv file 
                 filename = "ARIMA.csv"
