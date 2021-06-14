@@ -555,10 +555,10 @@ def executeJob(sc=None, app: PyCryptoBot = None, state: AppState = None, trading
                         pass
                 # Post ARIMA prediction to Telegram on the hour. 
                 if s.enter(60, 1, app.notifyTelegram(f'Seasonal ARIMA model predicts the closing price will be {str(round(prediction[1], 2))} at {prediction[0]} (delta: {round(prediction[1] - price, 2)})'), (app.notifyTelegram,)):
-
-                if state.last_action == 'BUY':
+                
+                    if state.last_action == 'BUY':
                     # display support, resistance and fibonacci levels
-                    Logger.info(technical_analysis.printSupportResistanceFibonacciLevels(price))
+                        Logger.info(technical_analysis.printSupportResistanceFibonacciLevels(price))
 
             else:
                 Logger.debug('-- Iteration: ' + str(state.iterations) + ' --' + bullbeartext)
