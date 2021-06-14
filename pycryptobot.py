@@ -546,13 +546,15 @@ def executeJob(sc=None, app: PyCryptoBot = None, state: AppState = None, trading
 
                 Logger.info(output_text)
 
-                # Seasonal Autoregressive Integrated Moving Average (ARIMA) model (ML prediction for 3 intervals from now)
+                 # Seasonal Autoregressive Integrated Moving Average (ARIMA) model (ML prediction for 3 intervals from now)
                 if not app.isSimulation():
                     try:
                         prediction = technical_analysis.seasonalARIMAModelPrediction(int(app.getGranularity() / 60) * 3) # 3 intervals from now
                         Logger.info(f'Seasonal ARIMA model predicts the closing price will be {str(round(prediction[1], 2))} at {prediction[0]} (delta: {round(prediction[1] - price, 2)})')
                     except:
                         pass
+                # Post ARIMA prediction to Telegram on the hour. 
+                if s.enter(60, 1, app.notifyTelegram(f'Seasonal ARIMA model predicts the closing price will be {str(round(prediction[1], 2))} at {prediction[0]} (delta: {round(prediction[1] - price, 2)})'), (app.notifyTelegram,)):
 
                 if state.last_action == 'BUY':
                     # display support, resistance and fibonacci levels
