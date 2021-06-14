@@ -6,6 +6,7 @@ import sched
 import sys
 import time
 import pandas as pd
+import csv
 from datetime import datetime
 from models.PyCryptoBot import PyCryptoBot, truncate as _truncate
 from models.AppState import AppState
@@ -554,8 +555,28 @@ def executeJob(sc=None, app: PyCryptoBot = None, state: AppState = None, trading
                     except:
                         pass
                 # Post ARIMA prediction to Telegram on the hour. 
-                s.enter(3200, 1, app.notifyTelegram(f'Seasonal ARIMA model predicts the closing price will be {str(round(prediction[1], 2))} at {prediction[0]} (delta: {round(prediction[1] - price, 2)})'), (app.notifyTelegram,))
+                s.enter(60, 3600, app.notifyTelegram(f'Seasonal ARIMA model predicts the closing price will be {str(round(prediction[1], 2))} at {prediction[0]} (delta: {round(prediction[1] - price, 2)})'), (app.notifyTelegram,))
                 
+                # field names 
+                fields = ['ARIMA Price', 'Time', f'{app.getMarket()}']
+    
+                # data rows of csv file 
+                rows = [ [f'{str(round(prediction[1], 2))},{prediction[0]},']]
+    
+                # name of csv file 
+                filename = "ARIMA.csv"
+    
+                    # writing to csv file 
+                with open(filename, 'a') as csvfile: 
+                    # creating a csv writer object 
+                    csvwriter = csv.writer(csvfile) 
+        
+                    # writing the fields 
+                    csvwriter.writerow(fields)
+        
+                    # writing the data rows 
+                    csvwriter.writerows(rows)
+
                 if state.last_action == 'BUY':
                 # display support, resistance and fibonacci levels
                     Logger.info(technical_analysis.printSupportResistanceFibonacciLevels(price))
